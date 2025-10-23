@@ -1,0 +1,73 @@
+# 🎓 ICS Quadratic Grader – Mukosha Previous
+
+This is a *single-file web app* built using *HTML + JavaScript* for the ICT251 Web Technologies assignment.  
+It performs two main functions:
+
+1. 🧮 *Solves a Quadratic Equation* of the form ax² + bx + c = 0
+2. 🧾 *Converts a Numeric Score (0–100)* to a *Letter Grade* based on a fixed grading scale
+
+---
+
+## ⚙ How to Run
+
+1. Download or clone this repository  
+   (Click the green "Code" button → Download ZIP → Extract it)  
+2. Open the file **index.html** by double-clicking it.  
+3. The app runs *offline in any browser* (no internet required).
+
+---
+
+## 🧩 Features
+
+### 🧮 Quadratic Solver
+- Inputs: *a, **b, and **c*
+- Validates that *a ≠ 0*
+- Displays:
+  - Discriminant (D = b² − 4ac)
+  - Nature of roots:
+    - D > 0 → Two distinct real roots  
+    - D = 0 → One real repeated root  
+    - D < 0 → Two complex conjugate roots
+- Includes a *Reset* button to clear inputs
+
+### 🎓 Grading System
+- Input: *Score (0–100)*
+- Validation for correct input range
+- Converts numeric score to *letter grade*:
+  - A+: 85–100  
+  - A: 75–84  
+  - B+: 65–74  
+  - B: 60–64  
+  - C+: 55–59  
+  - C: 50–54  
+  - D: 0–49  
+- Shows a friendly message like:  
+  Score 82 → Grade A
+
+---
+
+## 🧪 Example Tests
+
+### Quadratic Solver
+| a | b | c | Discriminant (D) | Nature of Roots |
+|---|---|---|------------------|-----------------|
+| 1 | 5 | 6 | 1 | Two distinct real roots |
+| 1 | 2 | 1 | 0 | One real repeated root |
+| 1 | 2 | 5 | -16 | Two complex conjugate roots |
+
+### Grade Converter
+| Score | Expected Grade |
+|--------|----------------|
+| 100 | A+ |
+| 85 | A+ |
+| 75 | A |
+| 65 | B+ |
+| 60 | B |
+| 55 | C+ |
+| 50 | C |
+| 49 | D |
+| 0 | D |
+
+---
+
+## 📂 Repository Structure
