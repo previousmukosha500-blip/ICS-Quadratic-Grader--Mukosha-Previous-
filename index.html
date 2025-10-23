@@ -1,0 +1,167 @@
+<!-- ...existing code... -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quadratic & Grading App</title>
+  <style>
+    /* Page layout and simple visual styles */
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f8f9fa; }
+    h1 { color: #333; }
+    section { margin-bottom: 30px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 5px #ccc; }
+    label { display: block; margin-top: 10px; }
+    input { margin-top: 5px; padding: 5px; width: 120px; }
+    button { margin-top: 10px; padding: 6px 12px; cursor: pointer; }
+    .result { margin-top: 15px; font-weight: bold; }
+    .error { color: red; }
+    .mono { font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>Quadratic Solver & Grading System</h1>
+
+  <!-- Quadratic Solver section: inputs for coefficients and result output -->
+  <section>
+    <h2>Quadratic Equation Solver</h2>
+    <label>a: <input type="number" id="a" step="any" aria-label="a coefficient"></label>
+    <label>b: <input type="number" id="b" step="any" aria-label="b coefficient"></label>
+    <label>c: <input type="number" id="c" step="any" aria-label="c coefficient"></label>
+    <button onclick="solveQuadratic()">Compute</button>
+    <button onclick="resetQuadratic()">Reset</button>
+    <div id="quadResult" class="result"></div>
+  </section>
+
+  <!-- Grading System section: input for score and grade output -->
+  <section>
+    <h2>Grade Converter</h2>
+    <label>Score (0–100): <input type="number" id="score" step="any" aria-label="score"></label>
+    <button onclick="convertGrade()">Compute</button>
+    <button onclick="resetGrade()">Reset</button>
+    <div id="gradeResult" class="result"></div>
+  </section>
+
+  <script>
+    // Solve a quadratic equation ax^2 + bx + c = 0
+    function solveQuadratic() {
+      try {
+        // Parse inputs as floats (step="any" allows decimals)
+        const a = parseFloat(document.getElementById('a').value);
+        const b = parseFloat(document.getElementById('b').value);
+        const c = parseFloat(document.getElementById('c').value);
+        const resultDiv = document.getElementById('quadResult');
+
+        // Validate inputs: ensure all three coefficients are numbers
+        if (isNaN(a) || isNaN(b) || isNaN(c)) {
+          resultDiv.innerHTML = '<span class="error">Please enter valid numbers for a, b, and c.</span>';
+          return;
+        }
+
+        // Special handling when a === 0 (degenerates to linear or inconsistent)
+        if (a === 0) {
+          // Now we have b*x + c = 0 OR degenerate cases
+          if (b === 0) {
+            // Both a and b are zero -> either infinite solutions or no solution
+            if (c === 0) {
+              resultDiv.innerHTML = 'Infinite solutions (0 = 0).';
+            } else {
+              resultDiv.innerHTML = '<span class="error">No solution (inconsistent equation).</span>';
+            }
+            return;
+          }
+          // Linear equation: b*x + c = 0 => x = -c / b
+          const x = -c / b;
+          resultDiv.innerHTML = `<div class="mono">Linear solution: x = ${x.toFixed(6)}</div>`;
+          return;
+        }
+
+        // Compute discriminant D = b^2 - 4ac
+        const discriminant = b * b - 4 * a * c;
+        let nature;   // Description of root type
+        let rootsHtml; // HTML to display the roots
+
+        if (discriminant > 0) {
+          // Two distinct real roots
+          nature = "Two distinct real roots";
+          const sqrtD = Math.sqrt(discriminant);
+          const x1 = (-b + sqrtD) / (2 * a);
+          const x2 = (-b - sqrtD) / (2 * a);
+          // Fixed decimal formatting for consistent display
+          rootsHtml = `x₁ = ${x1.toFixed(6)}<br>x₂ = ${x2.toFixed(6)}`;
+        } else if (discriminant === 0) {
+          // One repeated real root
+          nature = "One real repeated root";
+          const x = -b / (2 * a);
+          rootsHtml = `x = ${x.toFixed(6)}`;
+        } else {
+          // Complex conjugate roots: compute real and imaginary parts
+          nature = "Two complex conjugate roots";
+          const real = -b / (2 * a);
+          // imag is positive magnitude; sign handled when formatting
+          const imag = Math.sqrt(-discriminant) / (2 * a);
+          // Choose sign symbol for display
+          const imSign = imag >= 0 ? '+' : '-';
+          rootsHtml = `x₁ = ${real.toFixed(6)} ${imSign} ${Math.abs(imag).toFixed(6)}i<br>` +
+                      `x₂ = ${real.toFixed(6)} ${imSign === '+' ? '-' : '+'} ${Math.abs(imag).toFixed(6)}i`;
+        }
+
+        // Display discriminant, nature of roots and formatted roots
+        resultDiv.innerHTML =
+          `<div class="mono">Discriminant (D) = ${discriminant.toFixed(6)}</div>` +
+          `<div>Nature of roots: ${nature}</div>` +
+          `<div class="mono">${rootsHtml}</div>`;
+      } catch (err) {
+        // Catch-all unexpected errors to avoid uncaught exceptions in the UI
+        document.getElementById('quadResult').innerHTML =
+          `<span class="error">An unexpected error occurred: ${String(err)}</span>`;
+      }
+    }
+
+    // Clear quadratic inputs and result
+    function resetQuadratic() {
+      document.getElementById('a').value = '';
+      document.getElementById('b').value = '';
+      document.getElementById('c').value = '';
+      document.getElementById('quadResult').innerHTML = '';
+    }
+
+    // Convert numeric score to grade string with validation and error handling
+    function convertGrade() {
+      try {
+        const score = parseFloat(document.getElementById('score').value);
+        const resultDiv = document.getElementById('gradeResult');
+
+        // Validate score range (0 to 100)
+        if (isNaN(score) || score < 0 || score > 100) {
+          resultDiv.innerHTML = '<span class="error">Enter a number between 0 and 100.</span>';
+          return;
+        }
+
+        // Map numeric score to grade band
+        let grade;
+        if (score >= 85) grade = "A+";
+        else if (score >= 75) grade = "A";
+        else if (score >= 65) grade = "B+";
+        else if (score >= 60) grade = "B";
+        else if (score >= 55) grade = "C+";
+        else if (score >= 50) grade = "C";
+        else grade = "D";
+
+        // Display score (two decimals) and corresponding grade
+        resultDiv.innerHTML = `Score ${score.toFixed(2)} → Grade ${grade}`;
+      } catch (err) {
+        // Generic fallback for unexpected runtime errors
+        document.getElementById('gradeResult').innerHTML =
+          `<span class="error">An unexpected error occurred: ${String(err)}</span>`;
+      }
+    }
+
+    // Clear grade input and result
+    function resetGrade() {
+      document.getElementById('score').value = '';
+      document.getElementById('gradeResult').innerHTML = '';
+    }
+  </script>
+</body>
+</html>
+<!-- ...existing code... -->
